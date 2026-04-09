@@ -150,8 +150,8 @@ cd /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
 genus -f run.tcl | tee -i sync.log
 ```
 
-> ⏳ Chờ đến khi terminal trở về dấu nhắc lệnh. Synthesis mất khoảng **1–3 phút**.  
-> ⚠️ Nếu quá **5 phút** mà chưa xong → có thể bị hang, nhấn `Ctrl + C` để dừng và kiểm tra lại.
+> Chờ đến khi terminal trở về dấu nhắc lệnh. Synthesis mất khoảng **1–3 phút**.  
+> Nếu quá **5 phút** mà chưa xong → có thể bị hang, nhấn `Ctrl + C` để dừng và kiểm tra lại.
 
 
 ## 🔍 BƯỚC 6 – Kiểm tra Log (bắt buộc)
@@ -162,8 +162,8 @@ vi /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/sync.log
 
 > 💡 Dùng `/Error` trong vi để tìm nhanh từ khóa lỗi.
 
-- ✅ **Không có từ `Error`** → synthesis thành công, tiếp tục Bước 7
-- ❌ **Có `Error`** → phải đọc lỗi, sửa file rồi chạy lại từ Bước 5
+- **Không có từ `Error`** → synthesis thành công, tiếp tục Bước 7
+- **Có `Error`** → phải đọc lỗi, sửa file rồi chạy lại từ Bước 5
 
 
 ## 📊 BƯỚC 7 – Kiểm tra Synthesis Report
@@ -355,13 +355,13 @@ set_output_delay -clock [get_clocks clk] -add_delay 2.0 [get_ports lamp ]
 
 Sau mỗi lần sửa SDC, **chạy lại toàn bộ Bước 5 → 7** và kiểm tra CPS trong `final_time.rpt`.
 
-> 🎯 **Dừng lại** ở mức period nhỏ nhất mà **CPS vẫn >= 0** — đó chính là **tần số tối đa** của design.
+> **Dừng lại** ở mức period nhỏ nhất mà **CPS vẫn >= 0** — đó chính là **tần số tối đa** của design.
 
 ---
 
 # 📤 NỘP BÀI
 
-> ⚠️ **Chú ý quan trọng:**
+> **Chú ý quan trọng:**
 > - LAB1 (basic) và LAB3 (low-power) chỉ để **thực hành**, không cần nộp
 > - Chỉ nộp **4 file kết quả** từ lần synthesis với **tần số tối đa**
 
