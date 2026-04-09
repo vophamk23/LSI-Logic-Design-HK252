@@ -2,15 +2,12 @@
 ## Truong Dai hoc Bach Khoa - DHQG TP.HCM (HCMUT)
 ## Khoa Khoa hoc & Ky thuat May tinh
 
----
 
 ## Gioi Thieu Mon Hoc
 
 **Xu Ly Tin Hieu So (Digital Signal Processing - DSP)** la linh vuc nghien cuu cac phuong phap xu ly tin hieu thong qua he thong so hoa. Phan lon tin hieu trong thuc te ton tai o dang tuong tu (analog) - lien tuc theo thoi gian va bien do - va can duoc chuyen doi sang dang so thong qua qua trinh lay mau va luong tu hoa de may tinh co the xu ly duoc.
 
 DSP ket hop kien thuc tu nhieu linh vuc: toan hoc (giai tich, dai so tuyen tinh), ky thuat dien tu so, ly thuyet xac suat va thong tin, xu ly tin hieu tuong tu. Su phat trien cua phan cung so hien dai (vi xu ly DSP, FPGA, vi dieu khien) da bien DSP tro thanh nen tang cua hang loat cong nghe: vien thong, y sinh, xu ly am thanh va hinh anh, radar, dinh vi ve tinh, va nhieu he thong ky thuat khac.
-
----
 
 ## Thong Tin Mon Hoc
 
@@ -34,7 +31,6 @@ Sau khi hoan thanh mon hoc, sinh vien co kha nang:
 - Phan tich tin hieu va he thong trong mien tan so su dung bien doi Fourier.
 - Su dung Scilab de bieu dien, mo phong va phan tich tin hieu roi rac va cac he thong LTI.
 
----
 
 ## Noi Dung Mon Hoc
 
@@ -58,7 +54,6 @@ Bien doi Fourier thoi gian roi rac (DTFT): dinh nghia, tinh chat, dap ung tan so
 
 Bien doi Fourier roi rac (DFT) va bien doi nhanh Fourier (FFT): dinh nghia, tinh chat, moi quan he voi DTFT, ung dung DFT trong phan tich pho tin hieu, loc trong mien tan so.
 
----
 
 ## Tai Lieu Hoc Tap
 
@@ -72,7 +67,6 @@ Proakis, J. G., & Manolakis, D. G. (2006). *Digital Signal Processing: Principle
 - Tai lieu thuc hanh mon CO2036 - Khoa KHKT May tinh, HCMUT.
 - Scilab Documentation: https://www.scilab.org/documentation
 
----
 
 ## Thang Diem
 
