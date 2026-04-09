@@ -1,7 +1,4 @@
 # CO2036 - Digital Signal Processing | HK252
-## Truong Dai hoc Bach Khoa - DHQG TP.HCM (HCMUT)
-## Khoa Khoa hoc & Ky thuat May tinh
-
 
 ## Gioi Thieu Mon Hoc
 
