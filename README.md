@@ -111,12 +111,9 @@ set_max_transition 1.2 [current_design]
 
 > 📌 Period `5.0 ns` = tần số **200 MHz**. Waveform `{0.0 2.5}` và delay `2.5` luôn bằng **50% period**.
 
-
 ---
 
 # 🔬 PHẦN 1: LAB1 – BASIC GENUS FLOW
-
----
 
 ## BƯỚC 4 – Sửa file run.tcl của LAB1
 
