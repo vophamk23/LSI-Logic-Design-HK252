@@ -19,7 +19,7 @@ LAB2 gồm 3 phần chính:
 > ✅ Thư mục đã được tạo sẵn từ LAB1. File `bound_flasher.v` và `bound_flasher_tb.v` đã có sẵn tại `simulation_env/`.
 
 
-## 📦 BƯỚC 1 – Copy Sample Environment Kit
+## BƯỚC 1 – Copy Sample Environment Kit
 
 Đây là bước đầu tiên, copy toàn bộ kit mẫu từ Cadence về thư mục synthesis của bạn:
 
@@ -42,7 +42,7 @@ ls Genus_BoundFlasher
 > 📌 **Lưu ý:** Toàn bộ thư mục `LAB1/`, `LAB3/`, `LIB/`, `LEF/` đều **có sẵn trong kit**, không cần tự tạo. File `run.tcl` bên trong cũng đã có sẵn, bạn chỉ cần **sửa** cho đúng tên design.
 
 
-## 📁 BƯỚC 2 – Copy file RTL vào đúng chỗ
+## BƯỚC 2 – Copy file RTL vào đúng chỗ
 
 Copy `bound_flasher.v` từ thư mục simulation (LAB1) sang thư mục RTL của kit:
 
@@ -59,7 +59,7 @@ ls /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/RTL/
 
 ✅ Phải thấy file `bound_flasher.v` trong đó.
 
-## ✏️ BƯỚC 3 – Tạo file Constraint (SDC)
+## BƯỚC 3 – Tạo file Constraint (SDC)
 
 File này định nghĩa clock và timing cho quá trình synthesis:
 
@@ -92,7 +92,7 @@ set_max_transition 1.2 [current_design]
 
 ---
 
-## ✏️ BƯỚC 4 – Sửa file run.tcl của LAB1
+## BƯỚC 4 – Sửa file run.tcl của LAB1
 
 File `run.tcl` **đã có sẵn** trong kit, bạn chỉ cần mở và sửa đúng các chỗ:
 
@@ -121,7 +121,7 @@ write_hdl > ${_OUTPUTS_PATH}/${DESIGN}_m.v
 Lưu lại: `:wq`
 
 
-## ▶️ BƯỚC 5 – Chạy Synthesis
+## BƯỚC 5 – Chạy Synthesis
 
 Thực hiện **lần lượt từng lệnh** theo đúng thứ tự:
 
@@ -154,7 +154,7 @@ genus -f run.tcl | tee -i sync.log
 > Nếu quá **5 phút** mà chưa xong → có thể bị hang, nhấn `Ctrl + C` để dừng và kiểm tra lại.
 
 
-## 🔍 BƯỚC 6 – Kiểm tra Log (bắt buộc)
+## BƯỚC 6 – Kiểm tra Log (bắt buộc)
 
 ```bash
 vi /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/sync.log
@@ -166,7 +166,7 @@ vi /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/sync.log
 - **Có `Error`** → phải đọc lỗi, sửa file rồi chạy lại từ Bước 5
 
 
-## 📊 BƯỚC 7 – Kiểm tra Synthesis Report
+## BƯỚC 7 – Kiểm tra Synthesis Report
 
 ```bash
 cd /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
@@ -194,7 +194,7 @@ vi reports*/final_time.rpt
 > - CPS **`< 0 ps`** → **FAIL** ❌ Cần giảm tần số hoặc kiểm tra lại design
 
 
-## 🖥️ BƯỚC 8 – Tạo file gui.tcl để xem Schematic (tùy chọn)
+## BƯỚC 8 – Tạo file gui.tcl để xem Schematic (tùy chọn)
 
 ```bash
 vi /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/gui.tcl
@@ -229,7 +229,7 @@ genus -f gui.tcl -gui
 > LAB3 giống hệt LAB1, chỉ khác ở 2 điểm: dùng thư mục `LAB3/` và thêm cấu hình tiết kiệm điện vào `run.tcl`.
 
 
-## ✏️ BƯỚC 9 – Sửa file run.tcl của LAB3
+## BƯỚC 9 – Sửa file run.tcl của LAB3
 
 ```bash
 vi /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB3/run.tcl
@@ -269,7 +269,7 @@ Lưu lại: `:wq`
 > - `lp_power_optimization_weight 0.5` → Cân bằng giữa tối ưu điện động và điện rò (0=chỉ leakage, 1=chỉ dynamic)
 > - `max_dynamic_power 100` → Giới hạn công suất động tối đa
 
-## ▶️ BƯỚC 10 – Chạy Synthesis LAB3
+## BƯỚC 10 – Chạy Synthesis LAB3
 
 ```bash
 # Bước 10.1
@@ -296,7 +296,7 @@ cd /group08/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB3
 genus -f run.tcl | tee -i sync.log
 ```
 
-## 🔍 BƯỚC 11 – Kiểm tra Log & Report LAB3
+## BƯỚC 11 – Kiểm tra Log & Report LAB3
 
 Kiểm tra log:
 
@@ -322,7 +322,7 @@ vi reports*/final_time.rpt   # Timing – CPS >= 0 là đạt
 > Tần số tối đa = `1 / period_nhỏ_nhất_đạt_yêu_cầu`
 
 
-## ✏️ BƯỚC 12 – Sửa SDC và chạy lại nhiều lần
+## BƯỚC 12 – Sửa SDC và chạy lại nhiều lần
 
 Mở file SDC:
 
