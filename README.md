@@ -1,4 +1,4 @@
-# 🔬 HƯỚNG DẪN CHI TIẾT LAB2 – SYNTHESIS VỚI CADENCE GENUS
+# HƯỚNG DẪN CHI TIẾT LAB2 – SYNTHESIS VỚI CADENCE GENUS
 
 > **Thông tin sinh viên:**
 > - Group: `group08`
@@ -6,7 +6,7 @@
 > - File RTL có sẵn tại: `/group08/vlsi/2313946/work/simulation_env/bound_flasher.v`
 > - Thư mục làm việc LAB2: `/group08/vlsi/2313946/work/synthesis_env/`
 
-## 📋 TỔNG QUAN
+## TỔNG QUAN
 
 LAB2 gồm 3 phần chính:
 
