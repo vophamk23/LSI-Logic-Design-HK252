@@ -2,7 +2,6 @@
 
 > **Mục tiêu:** Làm quen với công cụ mô phỏng Xcelium của Cadence, chạy simulation cho mạch **Bound Flasher** và xem waveform bằng GUI SimVision.
 
----
 
 ## Mục lục
 
@@ -16,7 +15,6 @@
 8. [Script tiện lợi](#8-script-tiện-lợi)
 9. [Lưu ý quan trọng](#9-lưu-ý-quan-trọng)
 
----
 
 ## 1. Tổng quan bài lab
 
@@ -27,7 +25,6 @@ Bài lab này sử dụng **Xcelium** — công cụ simulation của Cadence �
 
 > Các lệnh command-line trong tài liệu này được hiển thị với ký hiệu `%>` ở đầu.
 
----
 
 ## 2. Bài tập: Bound Flasher
 
@@ -59,8 +56,6 @@ Thiết kế RTL cho mạch **Bound Flasher** gồm **16 đèn** (`lamp[0]` đ�
 bound_flasher.v       ← File RTL thiết kế (bạn tự viết)
 bound_flasher_tb.v    ← File Testbench (bạn tự viết / được cung cấp)
 ```
-
----
 
 ## 3. Tạo cấu trúc thư mục
 
@@ -94,7 +89,6 @@ Trước khi bắt đầu, tạo cây thư mục chuẩn theo cấu trúc sau:
 
 > ⚠️ Thay `{Student_ID}` bằng mã số sinh viên thực tế của bạn.
 
----
 
 ## 4. Chạy Simulation
 
@@ -149,7 +143,6 @@ Trước khi bắt đầu, tạo cây thư mục chuẩn theo cấu trúc sau:
 
 Mở file `run.log` để xem kết quả simulation. Kiểm tra xem có lỗi nào không.
 
----
 
 ## 5. Tạo Waveform file
 
@@ -198,8 +191,6 @@ Bạn sẽ thấy 2 file:
 
 Nếu 2 file này xuất hiện, waveform đã được dump thành công ✅
 
----
-
 ## 6. Xem Waveform bằng GUI (SimVision)
 
 ### Bước 1 — Cấp quyền license (tương tự phần simulation)
@@ -245,7 +236,6 @@ Sau khi mở, bạn sẽ thấy giao diện gồm các vùng chính:
 2. **Chọn các tín hiệu** muốn xem trong danh sách
 3. Waveform của các tín hiệu đó sẽ hiển thị ở vùng bên phải
 
----
 
 ## 7. Các nút hữu ích trong GUI
 
@@ -272,7 +262,6 @@ Sau khi mở, bạn sẽ thấy giao diện gồm các vùng chính:
 - Chọn tín hiệu → Click nút **Schematic Tracer**
 - Xem sơ đồ schematic liên quan đến tín hiệu đó
 
----
 
 ## 8. Script tiện lợi
 
@@ -312,7 +301,6 @@ simvision -64 &
 
 > 💡 Đảm bảo cả 2 file script này nằm trong thư mục `simulation_env` trước khi dùng.
 
----
 
 ## 9. Lưu ý quan trọng
 
