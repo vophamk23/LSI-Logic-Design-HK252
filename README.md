@@ -423,6 +423,4 @@ BƯỚC 12 → Giảm period trong SDC → chạy lại LAB1 → kiểm tra CPS
 NỘP BÀI → 4 file: netlist, area report, qor report, timing report
 ```
 
----
-
 *Gặp lỗi ở bước nào, hãy đọc nội dung `sync.log` và tìm dòng có từ khóa `Error` để xác định nguyên nhân.*
