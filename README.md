@@ -1,4 +1,3 @@
-
 # LAB1: SIMULATION VỚI CADENCE XCELIUM
 
 > **Thông tin sinh viên**
@@ -9,7 +8,7 @@
 > | Student ID | `2313946` |
 > | Tool | Cadence Xcelium + SimVision |
 
----
+
 
 ## 🗂️ Cấu trúc thư mục cần tạo
 
@@ -24,7 +23,6 @@
     └── lec_env/         ← (Dùng cho LAB3)
 ```
 
----
 
 ## 🚀 BƯỚC 1 – Tạo Cây Thư Mục
 
@@ -56,7 +54,6 @@ ls /group08/vlsi/2313946/output/
 
 ✅ Phải thấy đúng cấu trúc như trên.
 
----
 
 ## 🚀 BƯỚC 2 – Copy File Design và Testbench
 
@@ -102,9 +99,8 @@ ls /group08/vlsi/2313946/work/simulation_env/
 
 ✅ Phải thấy: `bound_flasher.v` và `bound_flasher_tb.v`
 
----
 
-## 🚀 BƯỚC 3 – Chạy Simulation (thủ công)
+## BƯỚC 3 – Chạy Simulation (thủ công)
 
 Thực hiện **từng lệnh theo thứ tự**:
 
@@ -131,9 +127,8 @@ xrun -access rw -licqueue -64BIT -l run.log bound_flasher_tb.v bound_flasher.v
 > ⏳ Thời gian simulation thường **< 5 phút**.  
 > Nếu quá **5 phút** mà chưa xong → nhấn `Ctrl + C` để dừng, kiểm tra lại file.
 
----
 
-## 🚀 BƯỚC 4 – Kiểm tra Kết quả Simulation
+## BƯỚC 4 – Kiểm tra Kết quả Simulation
 
 ```bash
 vi /group08/vlsi/2313946/work/simulation_env/run.log
@@ -146,9 +141,7 @@ Dùng `/Error` trong vi để tìm nhanh lỗi:
 | ✅ Không có `Error` | Simulation thành công → tiếp tục |
 | ❌ Có `Error` | Đọc nội dung lỗi → sửa file `.v` → chạy lại từ Bước 3 |
 
----
-
-## 🚀 BƯỚC 5 – Tạo File `go_sim` (chạy nhanh)
+## BƯỚC 5 – Tạo File `go_sim` (chạy nhanh)
 
 Thay vì gõ nhiều lệnh mỗi lần, tạo 1 file script để chạy nhanh:
 
@@ -180,9 +173,7 @@ cd /group08/vlsi/2313946/work/simulation_env
 source go_sim
 ```
 
----
-
-## 🚀 BƯỚC 6 – Thêm Code Dump Waveform vào Testbench
+## BƯỚC 6 – Thêm Code Dump Waveform vào Testbench
 
 Mở file testbench:
 
@@ -220,7 +211,7 @@ ls /group08/vlsi/2313946/work/simulation_env/
 
 ---
 
-## 🚀 BƯỚC 7 – Tạo File `go_gui` (mở SimVision nhanh)
+## BƯỚC 7 – Tạo File `go_gui` (mở SimVision nhanh)
 
 ```bash
 vi /group08/vlsi/2313946/work/simulation_env/go_gui
@@ -252,7 +243,7 @@ source go_gui
 
 ---
 
-## 🚀 BƯỚC 8 – Xem Waveform trong SimVision GUI
+## BƯỚC 8 – Xem Waveform trong SimVision GUI
 
 Sau khi cửa sổ SimVision mở ra, thực hiện theo thứ tự:
 
