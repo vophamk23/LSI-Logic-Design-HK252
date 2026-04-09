@@ -24,7 +24,7 @@
 ```
 
 
-## 🚀 BƯỚC 1 – Tạo Cây Thư Mục
+## BƯỚC 1 – Tạo Cây Thư Mục
 
 Chạy lần lượt các lệnh sau:
 
@@ -55,7 +55,7 @@ ls /group08/vlsi/2313946/output/
 ✅ Phải thấy đúng cấu trúc như trên.
 
 
-## 🚀 BƯỚC 2 – Copy File Design và Testbench
+## BƯỚC 2 – Copy File Design và Testbench
 
 Chuyển vào thư mục làm việc của LAB1:
 
