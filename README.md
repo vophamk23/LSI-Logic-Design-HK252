@@ -18,6 +18,32 @@ LAB2 gồm 3 phần chính:
 
 > ✅ Thư mục đã được tạo sẵn từ LAB1. File `bound_flasher.v` và `bound_flasher_tb.v` đã có sẵn tại `simulation_env/`.
 
+## 🗂️ Cấu trúc thư mục
+ 
+```
+/group08/vlsi/2313946/work/
+├── simulation_env/
+│   ├── bound_flasher.v          ← File RTL nguồn (từ LAB1 trước)
+│   └── bound_flasher_tb.v
+└── synthesis_env/
+    └── Genus_BoundFlasher/      ← Thư mục làm việc chính
+        ├── RTL/
+        │   └── bound_flasher.v  ← Copy RTL vào đây
+        ├── LIB/                 ← Có sẵn trong kit
+        ├── LEF/                 ← Có sẵn trong kit
+        ├── constraints/
+        │   └── bound_flasher_gate.sdc
+        ├── LAB1/
+        │   ├── run.tcl
+        │   ├── sync.log         ← Sinh ra sau khi chạy
+        │   ├── outputs/
+        │   │   └── bound_flasher_m.v
+        │   └── reports*/
+        │       ├── final_area.rpt
+        │       ├── final_qor.rpt
+        │       └── final_time.rpt
+        └── LAB3/                ← (Dùng cho phần Low-Power, không thuộc LAB1)
+```
 
 ## BƯỚC 1 – Copy Sample Environment Kit
 
