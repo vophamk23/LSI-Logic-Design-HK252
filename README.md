@@ -35,10 +35,11 @@ LAB2 gồm 3 phần chính:
         │   └── bound_flasher_gate.sdc
         ├── LAB1/
         │   ├── run.tcl
+        │   ├── gui.tcl
         │   ├── sync.log         ← Sinh ra sau khi chạy
-        │   ├── outputs/
+        │   ├── outputs_{DATE}/
         │   │   └── bound_flasher_m.v
-        │   └── reports*/
+        │   └── reports_{DATE}/
         │       ├── final_area.rpt
         │       ├── final_qor.rpt
         │       └── final_time.rpt
@@ -117,63 +118,53 @@ set_max_transition 1.2 [current_design]
 
 ## BƯỚC 4 – Sửa file run.tcl của LAB1
 
+Dùng lệnh Python để sửa tự động, không cần vào vi:
+
 ```bash
-vi ./Genus_BoundFlasher/LAB1/run.tcl
+python3 -c "
+import re
+with open('./Genus_BoundFlasher/LAB1/run.tcl', 'r') as f:
+    content = f.read()
+
+content = content.replace('set DESIGN dtmf_recvr_core', 'set DESIGN bound_flasher')
+content = re.sub(r'read_hdl \".*?\"', 'read_hdl \"bound_flasher.v\"', content, flags=re.DOTALL)
+content = content.replace('read_sdc ../constraints/dtmf_recvr_core_gate.sdc', 'read_sdc ../constraints/bound_flasher_gate.sdc')
+content = content.replace('## write_hdl  > \${_OUTPUTS_PATH}/\${DESIGN}_m.v', 'write_hdl  > \${_OUTPUTS_PATH}/\${DESIGN}_m.v')
+
+with open('./Genus_BoundFlasher/LAB1/run.tcl', 'w') as f:
+    f.write(content)
+print('Done')
+"
 ```
 
-Tìm và sửa **đúng 4 chỗ** sau (giữ nguyên phần còn lại của file):
+Kiểm tra lại:
 
-```tcl
-# Chỗ 1: Tên module design
+```bash
+grep -n "set DESIGN\|read_hdl\|read_sdc\|write_hdl" ./Genus_BoundFlasher/LAB1/run.tcl
+```
+
+✅ Phải thấy:
+```
 set DESIGN bound_flasher
-
-# Chỗ 2: Tên file RTL
 read_hdl "bound_flasher.v"
-
-# Chỗ 3: File constraint
 read_sdc ../constraints/bound_flasher_gate.sdc
-
-# Chỗ 4: Output netlist (kiểm tra lại cho chắc)
-write_hdl > ${_OUTPUTS_PATH}/${DESIGN}_m.v
+write_hdl  > ${_OUTPUTS_PATH}/${DESIGN}_m.v
 ```
-
-Lưu lại: `:wq`
-
-> 📌 Đảm bảo cuối file có dòng `quit`. Thiếu dòng này Genus sẽ không thoát sau khi synthesis xong.
 
 ---
 
 ## BƯỚC 5 – Chạy Synthesis
 
-Thực hiện **lần lượt từng lệnh** theo đúng thứ tự:
-
 ```bash
-# Bước 5.1 – Vào thư mục cadence để lấy license
 cd /home/share_file/cadence
-```
-
-```bash
-# Bước 5.2 – Load đường dẫn tool
 source add_path
-```
-
-```bash
-# Bước 5.3 – Load license
 source add_license
-```
-
-```bash
-# Bước 5.4 – Vào thư mục LAB1
 cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
-```
-
-```bash
-# Bước 5.5 – Chạy synthesis và lưu log
 genus -f run.tcl | tee -i sync.log
 ```
 
-> Chờ đến khi terminal trở về dấu nhắc lệnh. Synthesis mất khoảng **1–3 phút**.  
-> Nếu quá **5 phút** mà chưa xong → có thể bị hang, nhấn `Ctrl + C` để dừng và kiểm tra lại.
+> Chờ đến khi terminal trở về dấu nhắc lệnh. Synthesis mất khoảng **1–3 phút**.
+> Nếu quá **5 phút** mà chưa xong → nhấn `Ctrl + C` để dừng và kiểm tra lại.
 
 ---
 
@@ -183,46 +174,52 @@ genus -f run.tcl | tee -i sync.log
 vi sync.log
 ```
 
-> 💡 Dùng `/Error` trong vi để tìm nhanh từ khóa lỗi.
-
-- **Không có từ `Error`** → synthesis thành công, tiếp tục Bước 7
-- **Có `Error`** → đọc lỗi, sửa file rồi chạy lại từ Bước 5
+Gõ `/Error` để tìm lỗi:
+- **`Pattern not found`** → không có lỗi ✅ gõ `:q` thoát, tiếp tục Bước 7
+- **Nhảy đến dòng Error** → đọc lỗi, sửa file rồi chạy lại từ Bước 5
 
 ---
 
 ## BƯỚC 7 – Kiểm tra Synthesis Report
 
-```bash
-# Vẫn đang đứng trong thư mục LAB1
+> 📌 Report được lưu vào thư mục tên theo ngày giờ, ví dụ `reports_Apr10-08:29:43/`.
+> Xem thư mục mới nhất bằng lệnh:
 
+```bash
+ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports_*/ | head -1
+```
+
+Xem 3 report (thay `reports_Apr10-XX:XX:XX` bằng tên thư mục mới nhất):
+
+```bash
 # Report 1: Diện tích chip
-vi reports*/final_area.rpt
+vi reports_Apr10-XX:XX:XX/final_area.rpt
 ```
 
 ```bash
 # Report 2: Quality of Results
-vi reports*/final_qor.rpt
+vi reports_Apr10-XX:XX:XX/final_qor.rpt
 ```
 
 ```bash
 # Report 3: Timing – QUAN TRỌNG NHẤT
-vi reports*/final_time.rpt
+vi reports_Apr10-XX:XX:XX/final_time.rpt
 ```
 
-> ✅ Trong `final_time.rpt`, tìm dòng **Critical Path Slack (CPS)**:
-> - CPS **`>= 0 ps`** → **PASS** ✅ Netlist hợp lệ, đạt yêu cầu
-> - CPS **`< 0 ps`** → **FAIL** ❌ Cần giảm tần số hoặc kiểm tra lại design
+Trong `final_time.rpt`, gõ `/Slack` để tìm **Critical Path Slack (CPS)**:
+- CPS **`>= 0 ps`** → **PASS** ✅
+- CPS **`< 0 ps`** → **FAIL** ❌ cần tăng period lại
 
 ---
 
-## BƯỚC 8 – Tạo file gui.tcl để xem Schematic (tùy chọn)
+## BƯỚC 8 – Tạo file gui.tcl và xem Schematic (tùy chọn)
 
 ```bash
-# Vẫn đứng trong thư mục LAB1
+cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
 vi gui.tcl
 ```
 
-Nhập toàn bộ nội dung sau, lưu lại bằng `:wq`:
+Nhấn `i`, nhập nội dung sau, nhấn `Esc` rồi `:wq`:
 
 ```tcl
 set DESIGN bound_flasher
@@ -231,10 +228,15 @@ read_libs "../LIB/slow.lib ../LIB/pll.lib ../LIB/CDK_S128x16.lib ../LIB/CDK_S256
 
 read_physical -lef "../LEF/gsclib045_tech.lef ../LEF/gsclib045_macro.lef ../LEF/pll.lef ../LEF/CDK_S128x16.lef ../LEF/CDK_S256x16.lef ../LEF/CDK_R512x16.lef"
 
-read_hdl "./outputs/bound_flasher_m.v"
+read_hdl "./outputs_Apr10-XX:XX:XX/bound_flasher_m.v"
 
 elaborate $DESIGN
 ```
+
+> 📌 Thay `outputs_Apr10-XX:XX:XX` bằng tên thư mục output thực tế:
+> ```bash
+> ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
+> ```
 
 Mở GUI:
 
@@ -242,52 +244,47 @@ Mở GUI:
 genus -f gui.tcl -gui
 ```
 
-> Trong cửa sổ GUI: **Right Click** vào tên design → chọn **Schematic** để xem netlist dạng sơ đồ.
+Trong cửa sổ GUI: **Right Click** vào `bound_flasher` → chọn **Schematic** → chụp màn hình lưu lại cho report.
 
 ---
 
 # ⚡ PHẦN 2: LAB3 – LOW-POWER SYNTHESIS
 
-> LAB3 giống hệt LAB1, chỉ khác ở 2 điểm: dùng thư mục `LAB3/` và thêm cấu hình tiết kiệm điện vào `run.tcl`.
-
 ## BƯỚC 9 – Sửa file run.tcl của LAB3
 
 ```bash
-cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB3
-vi run.tcl
+python3 -c "
+import re
+with open('./Genus_BoundFlasher/LAB3/run.tcl', 'r') as f:
+    content = f.read()
+
+content = content.replace('set DESIGN dtmf_recvr_core', 'set DESIGN bound_flasher')
+content = re.sub(r'read_hdl \".*?\"', 'read_hdl \"bound_flasher.v\"', content, flags=re.DOTALL)
+content = content.replace('read_sdc ../constraints/dtmf_recvr_core_gate.sdc', 'read_sdc ../constraints/bound_flasher_gate.sdc')
+content = content.replace('## write_hdl  > \${_OUTPUTS_PATH}/\${DESIGN}_m.v', 'write_hdl  > \${_OUTPUTS_PATH}/\${DESIGN}_m.v')
+
+with open('./Genus_BoundFlasher/LAB3/run.tcl', 'w') as f:
+    f.write(content)
+print('Done')
+"
 ```
 
-**Sửa 4 chỗ tên design và file** giống hệt Bước 4 của LAB1:
-
-```tcl
-set DESIGN bound_flasher
-read_hdl "bound_flasher.v"
-read_sdc ../constraints/bound_flasher_gate.sdc
-write_hdl > ${_OUTPUTS_PATH}/${DESIGN}_m.v
-```
+Thêm cấu hình Low-Power vào `run.tcl` của LAB3:
 
 **Thêm TRƯỚC lệnh `elaborate`:**
-
 ```tcl
 set_db / .lp_insert_clock_gating true
 set_db / .leakage_power_effort medium
 ```
 
 **Thêm SAU lệnh `elaborate`:**
-
 ```tcl
 set_db "design:$DESIGN" .max_leakage_power            0.0
 set_db "design:$DESIGN" .lp_power_optimization_weight 0.5
 set_db "design:$DESIGN" .max_dynamic_power            100
 ```
 
-Lưu lại: `:wq`
-
-> 📌 Giải thích các thuộc tính Low-Power:
-> - `lp_insert_clock_gating true` → Bật Clock Gating để tiết kiệm điện động (phải đặt **trước** `elaborate`)
-> - `leakage_power_effort medium` → Mức độ tối ưu hóa điện rò rỉ
-> - `lp_power_optimization_weight 0.5` → Cân bằng giữa tối ưu điện động và điện rò (0–1)
-> - `max_dynamic_power 100` → Giới hạn công suất động tối đa (µW)
+> 📌 `lp_insert_clock_gating true` bắt buộc phải đặt **trước** `elaborate`.
 
 ---
 
@@ -306,67 +303,183 @@ genus -f run.tcl | tee -i sync.log
 ## BƯỚC 11 – Kiểm tra Log & Report LAB3
 
 ```bash
-# Vẫn đứng trong thư mục LAB3
 vi sync.log
-
-vi reports*/final_area.rpt
-vi reports*/final_qor.rpt
-vi reports*/final_time.rpt   # CPS >= 0 là đạt
 ```
+
+```bash
+vi reports_Apr10-XX:XX:XX/final_time.rpt
+```
+
+Gõ `/Slack` → CPS >= 0 là đạt ✅
 
 ---
 
 # 🔍 PHẦN 3: TÌM TẦN SỐ TỐI ĐA
 
-> Tái sử dụng LAB1. Mục tiêu: **giảm period đến mức nhỏ nhất mà CPS vẫn >= 0**.  
-> Tần số tối đa = `1 / period_nhỏ_nhất_đạt_yêu_cầu`
+> Mục tiêu: **giảm period đến mức nhỏ nhất mà CPS vẫn >= 0**.
+> **f_max = 1 / period_nhỏ_nhất_đạt_yêu_cầu**
 
 ## BƯỚC 12 – Sửa SDC và chạy lại nhiều lần
 
+Dùng lệnh này để sửa SDC nhanh (thay số period và delay tương ứng):
+
 ```bash
-cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher
-vi constraints/bound_flasher_gate.sdc
+cat > ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/constraints/bound_flasher_gate.sdc << 'EOF'
+current_design bound_flasher
+
+create_clock -name "clk" -add -period X.X -waveform {0.0 Y.Y} [get_ports clk]
+
+set_input_delay  -clock [get_clocks clk] -add_delay Y.Y [get_ports flick]
+set_input_delay  -clock [get_clocks clk] -add_delay Y.Y [get_ports rst_n]
+set_output_delay -clock [get_clocks clk] -add_delay Y.Y [get_ports lamp ]
+
+set_max_fanout 15.000 [current_design]
+set_max_transition 1.2 [current_design]
+EOF
 ```
 
-Thay đổi **3 giá trị** theo bảng thử nghiệm sau:
+> 📌 **Quy tắc:** `Y.Y` (delay & waveform) luôn = **50% của X.X** (period).
 
-| Lần thử | Period (ns) | Waveform | Delay (ns) | Tần số |
-|---------|-------------|----------|------------|--------|
-| 1 (mặc định) | `5.0` | `{0.0 2.5}` | `2.5` | 200 MHz |
-| 2 | `4.0` | `{0.0 2.0}` | `2.0` | 250 MHz |
-| 3 | `3.0` | `{0.0 1.5}` | `1.5` | 333 MHz |
-| 4 | `2.0` | `{0.0 1.0}` | `1.0` | 500 MHz |
-| 5 | `1.5` | `{0.0 0.75}` | `0.75` | 667 MHz |
+### Bảng kết quả đã chạy thực tế
 
-Ví dụ khi thử với `period = 4.0 ns`:
+| Lần | Period (ns) | Delay (ns) | Tần số | CPS (ps) | Kết quả |
+|-----|-------------|------------|--------|----------|---------|
+| 1 | 5.0 | 2.5 | 200 MHz | 1556 | ✅ |
+| 2 | 3.5 | 1.75 | 286 MHz | 668 | ✅ |
+| 3 | 3.0 | 1.5 | 333 MHz | 168 | ✅ |
+| 4 | 2.5 | 1.25 | 400 MHz | 16 | ✅ |
+| 5 | 1.5 | 0.75 | 667 MHz | 1 | ✅ |
+| 6 | **1.4** | **0.7** | **714 MHz** | **0** | ✅ **f_max** |
 
-```tcl
-create_clock -name "clk" -add -period 4.0 -waveform {0.0 2.0} [get_ports clk]
+> 🎯 **f_max = 714 MHz** (period = 1.4 ns, CPS = 0 ps)
 
-set_input_delay  -clock [get_clocks clk] -add_delay 2.0 [get_ports flick]
-set_input_delay  -clock [get_clocks clk] -add_delay 2.0 [get_ports rst_n]
-set_output_delay -clock [get_clocks clk] -add_delay 2.0 [get_ports lamp ]
+Sau mỗi lần sửa SDC, chạy lại synthesis:
+
+```bash
+cd /home/share_file/cadence && source add_path && source add_license
+cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
+genus -f run.tcl | tee -i sync.log
 ```
 
-> 📌 **Quy tắc:** Waveform và delay luôn = **50% của period**.
-
-Sau mỗi lần sửa SDC, **chạy lại toàn bộ Bước 5 → 7** và kiểm tra CPS trong `final_time.rpt`.
-
-> **Dừng lại** ở mức period nhỏ nhất mà **CPS vẫn >= 0** — đó chính là **tần số tối đa** của design.
+Kiểm tra CPS:
+```bash
+ls -td reports_*/ | head -1   # xem tên thư mục mới nhất
+vi reports_Apr10-XX:XX:XX/final_time.rpt
+```
 
 ---
 
 # 📤 NỘP BÀI
 
-> ⚠️ **LAB1 (basic) và LAB3 (low-power) chỉ để thực hành, không cần nộp.**  
-> Chỉ nộp **4 file kết quả** từ lần synthesis với **tần số tối đa**.
+> ⚠️ **LAB1 (basic) và LAB3 (low-power) chỉ để thực hành, không cần nộp.**
+> Chỉ nộp **4 file kết quả** từ lần synthesis với **f_max = 1.4 ns**.
+
+Xem thư mục output và report mới nhất:
+
+```bash
+ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
+ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports_*/
+```
 
 | File cần nộp | Đường dẫn |
 |---|---|
-| **Netlist** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs/bound_flasher_m.v` |
-| **Area report** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports*/final_area.rpt` |
-| **QoR report** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports*/final_qor.rpt` |
-| **Timing report** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports*/final_time.rpt` |
+| **Netlist** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v` |
+| **Area report** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports_Apr10-XX:XX:XX/final_area.rpt` |
+| **QoR report** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports_Apr10-XX:XX:XX/final_qor.rpt` |
+| **Timing report** | `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/reports_Apr10-XX:XX:XX/final_time.rpt` |
+
+---
+
+# 🎬 DEMO – CHẠY SHOW KẾT QUẢ
+
+> Chạy theo thứ tự này khi demo nộp bài.
+
+### 1. Show cấu trúc thư mục
+```bash
+ls ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/
+```
+
+### 2. Show file RTL
+```bash
+cat ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/RTL/bound_flasher.v
+```
+
+### 3. Show file SDC với f_max = 1.4 ns
+```bash
+cat ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/constraints/bound_flasher_gate.sdc
+```
+
+### 4. Show run.tcl đã sửa
+```bash
+grep -n "set DESIGN\|read_hdl\|read_sdc\|write_hdl" ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/run.tcl
+```
+
+### 5. Chạy lại synthesis LAB1 với f_max
+```bash
+cd /home/share_file/cadence && source add_path && source add_license
+cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
+genus -f run.tcl | tee -i sync.log
+```
+
+### 6. Kiểm tra log
+```bash
+vi sync.log
+```
+Gõ `/Error` → `Pattern not found` ✅ → `:q`
+
+### 7. Show report Area
+```bash
+vi $(ls -td reports_*/| head -1)final_area.rpt
+```
+
+### 8. Show report QoR
+```bash
+vi $(ls -td reports_*/| head -1)final_qor.rpt
+```
+
+### 9. Show report Timing – CPS = 0
+```bash
+vi $(ls -td reports_*/| head -1)final_time.rpt
+```
+Gõ `/Slack` → CPS = **0 ps** ✅ → `:q`
+
+### 10. Mở GUI xem Schematic
+```bash
+cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
+genus -f gui.tcl -gui
+```
+Right click `bound_flasher` → **Schematic** → chụp màn hình
+
+### 11. Chạy LAB3 Low-Power
+```bash
+cd /home/share_file/cadence && source add_path && source add_license
+cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB3
+genus -f run.tcl | tee -i sync.log
+```
+
+### 12. Show report Timing LAB3
+```bash
+vi $(ls -td reports_*/| head -1)final_time.rpt
+```
+Gõ `/Slack` → CPS = **16 ps** ✅ → `:q`
+
+### 13. Show bảng kết quả tìm f_max
+
+| Lần | Period (ns) | Delay (ns) | Tần số | CPS (ps) | Kết quả |
+|-----|-------------|------------|--------|----------|---------|
+| 1 | 5.0 | 2.5 | 200 MHz | 1556 | ✅ |
+| 2 | 3.5 | 1.75 | 286 MHz | 668 | ✅ |
+| 3 | 3.0 | 1.5 | 333 MHz | 168 | ✅ |
+| 4 | 2.5 | 1.25 | 400 MHz | 16 | ✅ |
+| 5 | 1.5 | 0.75 | 667 MHz | 1 | ✅ |
+| 6 | **1.4** | **0.7** | **714 MHz** | **0** | ✅ **f_max** |
+
+> 🎯 **f_max = 714 MHz**
+
+### 14. Show file netlist nộp bài
+```bash
+ls $(ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/ | head -1)
+```
 
 ---
 
@@ -382,29 +495,31 @@ BƯỚC 3  → vi ./Genus_BoundFlasher/constraints/bound_flasher_gate.sdc
            (Nhập nội dung SDC, lưu :wq)
 ─────────────────────────────────────────────────────────────────────
 PHẦN 1: LAB1 – BASIC SYNTHESIS
-BƯỚC 4  → vi ./Genus_BoundFlasher/LAB1/run.tcl
-           (Sửa: DESIGN, read_hdl, read_sdc, write_hdl, thêm quit)
+BƯỚC 4  → python3 sửa LAB1/run.tcl tự động
 BƯỚC 5  → cd /home/share_file/cadence && source add_path && source add_license
            cd ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1
            genus -f run.tcl | tee -i sync.log
 BƯỚC 6  → vi sync.log  (tìm Error bằng /Error)
-BƯỚC 7  → vi reports*/final_area.rpt
-           vi reports*/final_qor.rpt
-           vi reports*/final_time.rpt  (CPS >= 0 là đạt ✅)
-BƯỚC 8  → (Tùy chọn) vi gui.tcl → genus -f gui.tcl -gui
+BƯỚC 7  → vi reports_Apr10-XX:XX:XX/final_area.rpt
+           vi reports_Apr10-XX:XX:XX/final_qor.rpt
+           vi reports_Apr10-XX:XX:XX/final_time.rpt  (CPS >= 0 là đạt ✅)
+BƯỚC 8  → vi gui.tcl → genus -f gui.tcl -gui → Right click → Schematic
 ─────────────────────────────────────────────────────────────────────
 PHẦN 2: LAB3 – LOW-POWER SYNTHESIS
-BƯỚC 9  → vi ./Genus_BoundFlasher/LAB3/run.tcl
-           (Sửa như LAB1 + thêm các set_db low-power)
+BƯỚC 9  → python3 sửa LAB3/run.tcl + thêm set_db low-power
 BƯỚC 10 → source license → cd LAB3 → genus -f run.tcl | tee -i sync.log
-BƯỚC 11 → Kiểm tra sync.log và reports*/
+BƯỚC 11 → vi sync.log và reports_*/final_time.rpt (CPS = 16 ps ✅)
 ─────────────────────────────────────────────────────────────────────
 PHẦN 3: TÌM TẦN SỐ TỐI ĐA
-BƯỚC 12 → Giảm period trong SDC → chạy lại LAB1 (Bước 5→7)
-           Lặp đến khi tìm period nhỏ nhất mà CPS >= 0
+BƯỚC 12 → Giảm period trong SDC → chạy lại LAB1 → kiểm tra CPS
+           5.0ns(1556ps) → 3.5ns(668ps) → 3.0ns(168ps) → 2.5ns(16ps)
+           → 1.5ns(1ps) → 1.4ns(0ps) ← f_max = 714 MHz 🎉
 ─────────────────────────────────────────────────────────────────────
-NỘP BÀI → 4 file: netlist, area report, qor report, timing report
-           (Lấy từ LAB1/outputs/ và LAB1/reports*/ sau khi chạy f_max)
+NỘP BÀI → 4 file từ lần chạy f_max (period = 1.4 ns):
+           outputs_Apr10-XX:XX:XX/bound_flasher_m.v
+           reports_Apr10-XX:XX:XX/final_area.rpt
+           reports_Apr10-XX:XX:XX/final_qor.rpt
+           reports_Apr10-XX:XX:XX/final_time.rpt
 ```
 
-*Gặp lỗi ở bước nào, đọc nội dung `sync.log` và tìm dòng có từ khóa `Error` để xác định nguyên nhân.*
+*Gặp lỗi ở bước nào, đọc `sync.log` và tìm dòng có từ khóa `Error` để xác định nguyên nhân.*
