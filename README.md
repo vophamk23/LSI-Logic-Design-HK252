@@ -52,9 +52,27 @@ cd ~/vlsi/2313946/work/lec_env
 
 ---
 
-## BƯỚC 2 – Tạo symbolic link từ synthesis_env
+## BƯỚC 2 – Xác định tên thư mục outputs thực tế
 
-Link file RTL, Netlist và Library vào thư mục `lec_env`:
+> ⚠️ **Quan trọng:** Tên thư mục `outputs_` có timestamp thực tế sẽ khác nhau tùy máy/thời điểm chạy Synthesis. **Luôn xác định tên thư mục trước** khi dùng trong lệnh `ln -sf`.
+
+```bash
+# Xem tên thư mục outputs thực tế
+ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
+```
+
+Lệnh trên sẽ in ra ví dụ như:
+```
+/home/l04group8/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-14:23:01/
+```
+
+> Ghi nhớ tên thư mục đó (ví dụ `outputs_Apr10-14:23:01`) để dùng trong bước tiếp theo. Nếu có **nhiều thư mục** `outputs_*`, chọn cái mới nhất (in đầu tiên).
+
+---
+
+## BƯỚC 3 – Tạo symbolic link từ synthesis_env
+
+Thay `outputs_Apr10-XX:XX:XX` bằng tên thư mục **thực tế** tìm được ở Bước 2:
 
 ```bash
 ln -sf ../synthesis_env/Genus_BoundFlasher/RTL/bound_flasher.v
@@ -62,15 +80,11 @@ ln -sf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_fla
 ln -sf ../synthesis_env/Genus_BoundFlasher/LIB/slow.lib
 ```
 
-> 📌 Lệnh `ln -sf` tạo **symbolic link** (không copy file). Xem tên thư mục `outputs_` thực tế bằng lệnh:
-> ```bash
-> ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/ | head -1
-> ```
-> Thay `outputs_Apr10-XX:XX:XX` bằng tên thư mục in ra.
+> 📌 Lệnh `ln -sf` tạo **symbolic link** (không copy file thật). **Không dùng wildcard `*`** trong đường dẫn khi tạo symlink — nếu có nhiều thư mục `outputs_*`, wildcard sẽ chọn sai hoặc báo lỗi.
 
 ---
 
-## BƯỚC 3 – Kiểm tra link thành công
+## BƯỚC 4 – Kiểm tra link thành công
 
 ```bash
 ll
@@ -83,11 +97,11 @@ bound_flasher_m.v -> ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:X
 slow.lib          -> ../synthesis_env/Genus_BoundFlasher/LIB/slow.lib
 ```
 
-❌ Nếu thấy link màu đỏ (broken link) → kiểm tra lại đường dẫn trong Bước 2.
+❌ Nếu thấy link màu đỏ (broken link) → kiểm tra lại đường dẫn trong Bước 3 (sai tên thư mục `outputs_`).
 
 ---
 
-## BƯỚC 4 – Tạo script cấu hình `lec.tcl`
+## BƯỚC 5 – Tạo script cấu hình `lec.tcl`
 
 ```bash
 vi ./lec.tcl
@@ -121,7 +135,7 @@ compare
 
 ---
 
-## BƯỚC 5 – Tạo script thực thi `go_lec`
+## BƯỚC 6 – Tạo script thực thi `go_lec`
 
 ```bash
 vi ./go_lec
@@ -148,7 +162,7 @@ chmod +x ./go_lec
 
 ---
 
-## BƯỚC 6 – Chạy LEC
+## BƯỚC 7 – Chạy LEC
 
 ```bash
 ./go_lec
@@ -158,7 +172,7 @@ chmod +x ./go_lec
 
 ---
 
-## BƯỚC 7 – Kiểm tra kết quả trên GUI
+## BƯỚC 8 – Kiểm tra kết quả trên GUI
 
 Khi quá trình hoàn tất, quan sát cửa sổ GUI:
 
@@ -169,18 +183,48 @@ Sau khi xem xong, gõ `exit` vào terminal của GUI để thoát.
 
 ---
 
+## BƯỚC 9 – Xác nhận kết quả qua file log
+
+Sau khi thoát GUI, kiểm tra file log để xác nhận kết quả:
+
+```bash
+cat ~/vlsi/2313946/work/lec_env/lec.log
+```
+
+Tìm dòng xác nhận kết quả — nếu LEC PASS sẽ có dòng tương tự:
+```
+Compared points:  EQUIVALENT
+```
+
+Hoặc tìm nhanh bằng grep:
+```bash
+grep -i "equivalent\|non-equivalent\|abort\|error" lec.log
+```
+
+- ✅ Chỉ thấy dòng `EQUIVALENT` → LEC Pass, không có lỗi
+- ❌ Thấy `NON-EQUIVALENT` → có điểm không khớp → sang Phần 2
+- ❌ Thấy `ERROR` hoặc `ABORT` → lỗi cấu hình, xem phần Xử lý lỗi cuối tài liệu
+
+---
+
 # 🐛 PHẦN 2: DEBUG NON-EQUIVALENT POINT
 
 > Phần này cố tình tạo bug trong Netlist để thực hành quy trình debug.
 
-## BƯỚC 8 – Xóa link cũ, copy thật Netlist vào
+## BƯỚC 10 – Xóa link cũ, copy thật Netlist vào
 
 ```bash
 rm -rf bound_flasher_m.v
-cp -rf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/bound_flasher_m.v ./
 ```
 
-> ⚠️ Phải **copy thật** (không dùng `ln`), vì bước tiếp theo cần chỉnh sửa file. Sửa symlink sẽ ảnh hưởng đến file gốc trong `synthesis_env`.
+Xác định tên thư mục outputs (như Bước 2), rồi copy với tên thư mục cụ thể:
+```bash
+cp -rf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v ./
+```
+
+> ⚠️ **Phải copy thật** (không dùng `ln`), vì bước tiếp theo cần chỉnh sửa file. Sửa symlink sẽ ảnh hưởng đến file gốc trong `synthesis_env`.
+>
+> ⚠️ **Không dùng wildcard** `outputs_*` trong lệnh `cp` nếu có nhiều thư mục — có thể copy nhầm file. Dùng tên thư mục đầy đủ cụ thể.
 
 Kiểm tra:
 
@@ -192,31 +236,84 @@ ll
 
 ---
 
-## BƯỚC 9 – Tạo bug trong Netlist
+## BƯỚC 11 – Tìm cell INV để sửa
+
+Trước khi vào vi, tìm dòng có INV cell trong Netlist:
 
 ```bash
-vi ./bound_flasher_m.v
+grep -n "INV" bound_flasher_m.v | head -10
 ```
 
-Trong file, **tìm 1 cell INV bất kỳ** và đổi thành **BUF**. Ví dụ:
-
-```verilog
-// Trước khi sửa:
-INVX1 U_inv_1 (.A(net_0001), .ZN(net_0002));
-
-// Sau khi sửa (đổi INVX1 → BUFX1, đổi .ZN → .Z):
-BUFX1 U_inv_1 (.A(net_0001), .Z(net_0002));
+Kết quả ví dụ:
+```
+47: INVX1 U15 (.A(n_12), .ZN(n_13));
+63: INVX2 U23 (.A(n_20), .ZN(n_21));
 ```
 
-> 📌 Tên cell thực tế phụ thuộc vào thư viện. Tìm dòng có `INV` bằng lệnh:
-> ```bash
-> grep -n "INV" bound_flasher_m.v | head -5
-> ```
-> Chọn 1 dòng bất kỳ rồi sửa. Lưu file bằng `Esc` → `:wq`.
+Ghi nhớ số dòng của **1 cell bất kỳ** (ví dụ dòng 47) để dùng trong bước tiếp theo.
 
 ---
 
-## BƯỚC 10 – Chạy lại LEC với Netlist đã bị sửa
+## BƯỚC 12 – Tạo bug trong Netlist
+
+### Cách 1: Dùng `vi` (mở trực tiếp đến dòng cần sửa)
+
+```bash
+vi +47 ./bound_flasher_m.v
+```
+
+Trong vi: nhấn `i` → đổi `INV` thành `BUF` → sửa tên port output:
+
+```verilog
+# Trước khi sửa:
+INVX1 U15 (.A(n_12), .ZN(n_13));
+
+# Sau khi sửa:
+BUFX1 U15 (.A(n_12), .Z(n_13));
+```
+
+Nhấn `Esc` → `:wq` để lưu.
+
+---
+
+### Cách 2: Dùng `sed` (nhanh hơn, không cần vào vi)
+
+Thay `47` bằng số dòng thực tế tìm được ở Bước 11, và thay tên cell phù hợp:
+
+```bash
+# Ví dụ: đổi INVX1 → BUFX1 tại dòng 47
+sed -i '47s/INVX1/BUFX1/' bound_flasher_m.v
+
+# Và đổi port .ZN → .Z tại cùng dòng đó
+sed -i '47s/\.ZN(/\.Z(/' bound_flasher_m.v
+```
+
+Xác nhận đã sửa đúng:
+```bash
+sed -n '45,49p' bound_flasher_m.v
+```
+
+---
+
+> ### ⚠️ Lưu ý quan trọng về tên port BUF
+>
+> Tên port của BUF cell **phụ thuộc vào thư viện `slow.lib`**. Không phải thư viện nào cũng giống nhau:
+>
+> | Thư viện | INV output port | BUF output port |
+> |----------|----------------|----------------|
+> | Thông thường | `.ZN` | `.Z` |
+> | Một số thư viện khác | `.Y` | `.Y` |
+> | Một số thư viện khác | `.ZN` | `.ZN` |
+>
+> Nếu Conformal báo lỗi dạng `port Z not found` hoặc `unresolved pin`, hãy kiểm tra tên port BUF thực tế trong thư viện:
+> ```bash
+> grep -A 10 "cell (BUF" slow.lib | grep "pin ("
+> ```
+> Dùng đúng tên port in ra từ lệnh trên.
+
+---
+
+## BƯỚC 13 – Chạy lại LEC với Netlist đã bị sửa
 
 ```bash
 ./go_lec
@@ -224,13 +321,13 @@ BUFX1 U_inv_1 (.A(net_0001), .Z(net_0002));
 
 ---
 
-## BƯỚC 11 – Quan sát Non-equivalent points trên GUI
+## BƯỚC 14 – Quan sát Non-equivalent points trên GUI
 
 Khi GUI mở, sẽ xuất hiện danh sách **Non-equivalent points** trong cửa sổ chính.
 
 ---
 
-## BƯỚC 12 – Debug bằng Mapping Manager và Schematics Viewer
+## BƯỚC 15 – Debug bằng Mapping Manager và Schematics Viewer
 
 Thực hiện theo thứ tự sau:
 
@@ -251,8 +348,8 @@ Thực hiện theo thứ tự sau:
 - Cửa sổ **Schematics Viewer** hiển thị hai schematic song song
 
 **⑤ Đọc kết quả simulation**
-- Schematic bên **phải**: Golden (RTL)
 - Schematic bên **trái**: Revised (Netlist)
+- Schematic bên **phải**: Golden (RTL)
 - Quan sát endpoint được đánh dấu (vòng tròn hồng): giá trị Revised ≠ Golden
 
 **⑥ Mở rộng logic cone**
@@ -287,38 +384,49 @@ PHẦN 1: LEC CƠ BẢN
 ────────────────────────────────────────────────────────────────
 BƯỚC 1  → cd ~/vlsi/2313946/work/lec_env
 
-BƯỚC 2  → ln -sf ../synthesis_env/Genus_BoundFlasher/RTL/bound_flasher.v
-           ln -sf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/bound_flasher_m.v
-           ln -sf ../synthesis_env/Genus_BoundFlasher/LIB/slow.lib
+BƯỚC 2  → ls -td .../LAB1/outputs_*/  (xác định tên thư mục thực tế)
 
-BƯỚC 3  → ll  (kiểm tra 3 link, không có broken link)
+BƯỚC 3  → ln -sf .../RTL/bound_flasher.v
+           ln -sf .../LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v   ← tên cụ thể!
+           ln -sf .../LIB/slow.lib
 
-BƯỚC 4  → vi ./lec.tcl  (nhập nội dung script, lưu :wq)
+BƯỚC 4  → ll  (kiểm tra 3 link, không có broken link)
 
-BƯỚC 5  → vi ./go_lec   (nhập nội dung script, lưu :wq)
+BƯỚC 5  → vi ./lec.tcl  (nhập nội dung script, lưu :wq)
+
+BƯỚC 6  → vi ./go_lec   (nhập nội dung script, lưu :wq)
            chmod +x ./go_lec
 
-BƯỚC 6  → ./go_lec
+BƯỚC 7  → ./go_lec
 
-BƯỚC 7  → GUI mở → không có Non-equivalent → gõ exit ✅
+BƯỚC 8  → GUI mở → không có Non-equivalent → gõ exit ✅
+
+BƯỚC 9  → grep -i "equivalent" lec.log  (xác nhận EQUIVALENT trong log) ✅
 ────────────────────────────────────────────────────────────────
 PHẦN 2: DEBUG NON-EQUIVALENT POINT
 ────────────────────────────────────────────────────────────────
-BƯỚC 8  → rm -rf bound_flasher_m.v
-           cp -rf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/bound_flasher_m.v ./
+BƯỚC 10 → rm -rf bound_flasher_m.v
+           cp -rf .../outputs_Apr10-XX:XX:XX/bound_flasher_m.v ./  ← tên cụ thể!
 
-BƯỚC 9  → vi ./bound_flasher_m.v  (đổi 1 INV cell → BUF cell, lưu :wq)
+BƯỚC 11 → grep -n "INV" bound_flasher_m.v | head -10
+           (ghi nhớ số dòng của 1 INV cell bất kỳ)
 
-BƯỚC 10 → ./go_lec
+BƯỚC 12 → vi +<line_number> ./bound_flasher_m.v
+           (đổi INVX1 → BUFX1, đổi .ZN → .Z, lưu :wq)
+           Hoặc dùng sed:
+           sed -i '<line>s/INVX1/BUFX1/' bound_flasher_m.v
+           sed -i '<line>s/\.ZN(/\.Z(/' bound_flasher_m.v
 
-BƯỚC 11 → GUI hiện Non-equivalent points
+BƯỚC 13 → ./go_lec
 
-BƯỚC 12 → Debug theo thứ tự:
+BƯỚC 14 → GUI hiện Non-equivalent points
+
+BƯỚC 15 → Debug theo thứ tự:
            ① Mở Mapping Manager
            ② Filter: Class → Disable All → Non-Equivalent
            ③ Right-click điểm lỗi → Diagnose
            ④ Trong Diagnosis Manager → chọn Schematics
-           ⑤ Đọc endpoint: Revised ≠ Golden
+           ⑤ Đọc endpoint: Revised (trái) ≠ Golden (phải)
            ⑥ Right-click pin → Fan-in Cone → Open
            ⑦ Dùng gate tím làm mốc định hướng
            ⑧ Tìm gate hồng = root cause (BUF thay vì INV)
@@ -334,9 +442,11 @@ BƯỚC 12 → Debug theo thứ tự:
 | Vấn đề | Nguyên nhân | Cách xử lý |
 |--------|-------------|------------|
 | Link màu đỏ (broken) sau `ll` | Đường dẫn trong `ln -sf` sai hoặc chưa có file Netlist | Kiểm tra `ls synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/` |
-| `lec.log` báo lỗi `cannot find design` | Tên design trong `lec.tcl` không khớp với tên module trong file `.v` | Kiểm tra `grep "^module" bound_flasher.v` |
+| `lec.log` báo `cannot find design` | Tên design trong `lec.tcl` không khớp với tên module trong file `.v` | Kiểm tra `grep "^module" bound_flasher.v` |
 | GUI không mở | License chưa được source | Đảm bảo đã chạy `source add_path` và `source add_license` |
 | Non-equivalent vẫn xuất hiện sau khi fix | Chỉnh sửa symlink thay vì file thật | Xóa symlink, copy file thật, sửa lại |
+| `port Z not found` khi chạy Conformal | Tên port BUF trong thư viện khác `.Z` | Chạy `grep -A 10 "cell (BUF" slow.lib \| grep "pin ("` để tìm tên port đúng |
+| Nhiều thư mục `outputs_*`, không biết chọn cái nào | Nhiều lần chạy Synthesis | Dùng `ls -td .../outputs_*/ \| head -1` để lấy thư mục mới nhất |
 
 *Nếu vẫn gặp lỗi, kiểm tra file `lec.log` trong thư mục `lec_env/` để xem chi tiết.*
 
@@ -372,16 +482,21 @@ cat ~/vlsi/2313946/work/lec_env/go_lec
 
 ### 4. [PHẦN 1] Chạy LEC với Netlist gốc → kết quả Equivalent
 
-> Đảm bảo `bound_flasher_m.v` đang là symlink (Netlist gốc chưa bị sửa).
-> Nếu đã copy thật từ Phần 2, restore lại symlink:
-> ```bash
-> cd ~/vlsi/2313946/work/lec_env
-> rm -f bound_flasher_m.v
-> ln -sf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/bound_flasher_m.v
-> ```
+Đảm bảo `bound_flasher_m.v` đang là symlink (Netlist gốc chưa bị sửa).
+Nếu đã copy thật từ Phần 2, restore lại symlink — **dùng tên cụ thể, không dùng wildcard**:
 
 ```bash
 cd ~/vlsi/2313946/work/lec_env
+
+# Xác định tên thư mục outputs trước
+ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
+
+# Rồi mới restore symlink với tên cụ thể
+rm -f bound_flasher_m.v
+ln -sf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v
+```
+
+```bash
 ./go_lec
 ```
 ✅ GUI mở → **không có Non-equivalent points** → Netlist equivalent với RTL
@@ -392,9 +507,9 @@ Gõ `exit` để thoát GUI, sau đó tiếp tục.
 
 ### 5. Show log LEC Pass
 ```bash
-cat ~/vlsi/2313946/work/lec_env/lec.log
+grep -i "equivalent\|non-equivalent" ~/vlsi/2313946/work/lec_env/lec.log
 ```
-✅ Tìm dòng xác nhận kết quả, không có dòng `Non-Equivalent`
+✅ Thấy dòng xác nhận `EQUIVALENT`, không có dòng `NON-EQUIVALENT`
 
 ---
 
@@ -403,7 +518,12 @@ cat ~/vlsi/2313946/work/lec_env/lec.log
 ```bash
 cd ~/vlsi/2313946/work/lec_env
 rm -rf bound_flasher_m.v
-cp -rf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/bound_flasher_m.v ./
+
+# Xác định tên thư mục outputs
+ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
+
+# Copy với tên cụ thể
+cp -rf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v ./
 ```
 
 Kiểm tra đã copy thật (không có `->` ):
@@ -413,14 +533,19 @@ ll
 
 Tìm dòng INV để sửa:
 ```bash
-grep -n "INV" bound_flasher_m.v | head -5
+grep -n "INV" bound_flasher_m.v | head -10
 ```
 
 Sửa 1 INV → BUF (thay `<line_number>` bằng số dòng tìm được ở trên):
 ```bash
 vi +<line_number> ./bound_flasher_m.v
 ```
-> Trong vi: nhấn `i` → đổi `INV` → `BUF` (và đổi port `.ZN` → `.Z` nếu có) → `Esc` → `:wq`
+> Trong vi: nhấn `i` → đổi `INVxx` → `BUFxx` (cùng size, ví dụ INVX1→BUFX1) và đổi port `.ZN` → `.Z` (nếu thư viện dùng `.Z`) → `Esc` → `:wq`
+
+Xác nhận sửa đúng:
+```bash
+sed -n '<line_number-2>,<line_number+2>p' bound_flasher_m.v
+```
 
 ---
 
@@ -443,7 +568,7 @@ Thực hiện theo thứ tự trên GUI:
 | ② | Class → Disable All → **Non-Equivalent** | Danh sách lọc chỉ còn điểm lỗi |
 | ③ | Right-click điểm lỗi → **Diagnose** | Cửa sổ Diagnosis Manager mở |
 | ④ | Chọn **Schematics** | Schematics Viewer hiện 2 schematic song song |
-| ⑤ | Quan sát endpoint (vòng tròn hồng) | Revised = 1, Golden = 0 (khác nhau) |
+| ⑤ | Quan sát endpoint (vòng tròn hồng) | Revised (trái) ≠ Golden (phải) |
 | ⑥ | Right-click pin → **Fan-in Cone → Open** | Logic cone mở rộng |
 | ⑦ | Quan sát gate màu tím | Gate tím = có counterpart tương đương bên kia |
 | ⑧ | Tìm gate màu hồng | **BUF-gate** = root cause |
