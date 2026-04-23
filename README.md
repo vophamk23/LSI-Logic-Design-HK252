@@ -40,7 +40,6 @@ LAB 3 gồm 2 phần chính:
     └── lec.log                       ← Log sinh ra sau khi chạy
 ```
 
----
 
 # 🔬 PHẦN 1: THỰC HIỆN LEC CƠ BẢN
 
@@ -50,7 +49,6 @@ LAB 3 gồm 2 phần chính:
 cd ~/vlsi/2313946/work/lec_env
 ```
 
----
 
 ## BƯỚC 2 – Xác định tên thư mục outputs thực tế
 
@@ -68,8 +66,6 @@ Lệnh trên sẽ in ra ví dụ như:
 
 > Ghi nhớ tên thư mục đó (ví dụ `outputs_Apr10-14:23:01`) để dùng trong bước tiếp theo. Nếu có **nhiều thư mục** `outputs_*`, chọn cái mới nhất (in đầu tiên).
 
----
-
 ## BƯỚC 3 – Tạo symbolic link từ synthesis_env
 
 Thay `outputs_Apr10-XX:XX:XX` bằng tên thư mục **thực tế** tìm được ở Bước 2:
@@ -82,7 +78,6 @@ ln -sf ../synthesis_env/Genus_BoundFlasher/LIB/slow.lib
 
 > 📌 Lệnh `ln -sf` tạo **symbolic link** (không copy file thật). **Không dùng wildcard `*`** trong đường dẫn khi tạo symlink — nếu có nhiều thư mục `outputs_*`, wildcard sẽ chọn sai hoặc báo lỗi.
 
----
 
 ## BƯỚC 4 – Kiểm tra link thành công
 
@@ -99,7 +94,6 @@ slow.lib          -> ../synthesis_env/Genus_BoundFlasher/LIB/slow.lib
 
 ❌ Nếu thấy link màu đỏ (broken link) → kiểm tra lại đường dẫn trong Bước 3 (sai tên thư mục `outputs_`).
 
----
 
 ## BƯỚC 5 – Tạo script cấu hình `lec.tcl`
 
@@ -133,7 +127,6 @@ compare
 | `add_compared_points -all` | Thêm tất cả điểm vào danh sách so sánh |
 | `compare` | Thực hiện so sánh |
 
----
 
 ## BƯỚC 6 – Tạo script thực thi `go_lec`
 
@@ -160,7 +153,6 @@ chmod +x ./go_lec
 
 > 📌 Phần `source add_path` và `source add_license` cấu hình môi trường và license để chạy Conformal. Phần `lec -64 -dofile ./lec.tcl &` khởi động Conformal với script đã tạo.
 
----
 
 ## BƯỚC 7 – Chạy LEC
 
@@ -170,7 +162,6 @@ chmod +x ./go_lec
 
 > Conformal sẽ tự động mở GUI và thực thi các lệnh trong `lec.tcl`.
 
----
 
 ## BƯỚC 8 – Kiểm tra kết quả trên GUI
 
@@ -181,7 +172,6 @@ Khi quá trình hoàn tất, quan sát cửa sổ GUI:
 
 Sau khi xem xong, gõ `exit` vào terminal của GUI để thoát.
 
----
 
 ## BƯỚC 9 – Xác nhận kết quả qua file log
 
@@ -234,7 +224,6 @@ ll
 
 ✅ `bound_flasher_m.v` phải hiển thị là file thường (không có mũi tên `->`)
 
----
 
 ## BƯỚC 11 – Tìm cell INV để sửa
 
@@ -252,7 +241,6 @@ Kết quả ví dụ:
 
 Ghi nhớ số dòng của **1 cell bất kỳ** (ví dụ dòng 47) để dùng trong bước tiếp theo.
 
----
 
 ## BƯỚC 12 – Tạo bug trong Netlist
 
@@ -274,7 +262,6 @@ BUFX1 U15 (.A(n_12), .Z(n_13));
 
 Nhấn `Esc` → `:wq` để lưu.
 
----
 
 ### Cách 2: Dùng `sed` (nhanh hơn, không cần vào vi)
 
@@ -293,7 +280,7 @@ Xác nhận đã sửa đúng:
 sed -n '45,49p' bound_flasher_m.v
 ```
 
----
+
 
 > ### ⚠️ Lưu ý quan trọng về tên port BUF
 >
@@ -311,7 +298,6 @@ sed -n '45,49p' bound_flasher_m.v
 > ```
 > Dùng đúng tên port in ra từ lệnh trên.
 
----
 
 ## BƯỚC 13 – Chạy lại LEC với Netlist đã bị sửa
 
@@ -319,13 +305,11 @@ sed -n '45,49p' bound_flasher_m.v
 ./go_lec
 ```
 
----
 
 ## BƯỚC 14 – Quan sát Non-equivalent points trên GUI
 
 Khi GUI mở, sẽ xuất hiện danh sách **Non-equivalent points** trong cửa sổ chính.
 
----
 
 ## BƯỚC 15 – Debug bằng Mapping Manager và Schematics Viewer
 
@@ -375,7 +359,6 @@ Thực hiện theo thứ tự sau:
 - Xác nhận đây là cell BUF sai vị trí (đáng lẽ phải là INV)
 - Giải pháp: sửa lại Netlist, hoặc **re-synthesize** từ RTL, hoặc thực hiện **ECO (Engineering Change Order)**
 
----
 
 # 📌 TÓM TẮT TOÀN BỘ QUY TRÌNH
 
@@ -435,7 +418,6 @@ BƯỚC 15 → Debug theo thứ tự:
            ⑪ Xác nhận lỗi → đề xuất re-synthesize / ECO ✅
 ```
 
----
 
 ## ❓ XỬ LÝ LỖI THƯỜNG GẶP
 
