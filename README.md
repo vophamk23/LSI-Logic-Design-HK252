@@ -456,7 +456,10 @@ BƯỚC 15 → Debug theo thứ tự:
 
 > Chạy theo thứ tự này khi demo nộp bài.
 
+---
+
 ### 1. Show cấu trúc thư mục lec_env
+
 ```bash
 ll ~/vlsi/2313946/work/lec_env/
 ```
@@ -465,6 +468,7 @@ ll ~/vlsi/2313946/work/lec_env/
 ---
 
 ### 2. Show nội dung file lec.tcl
+
 ```bash
 cat ~/vlsi/2313946/work/lec_env/lec.tcl
 ```
@@ -473,6 +477,7 @@ cat ~/vlsi/2313946/work/lec_env/lec.tcl
 ---
 
 ### 3. Show nội dung file go_lec
+
 ```bash
 cat ~/vlsi/2313946/work/lec_env/go_lec
 ```
@@ -480,32 +485,8 @@ cat ~/vlsi/2313946/work/lec_env/go_lec
 
 ---
 
-### 4. [PHẦN 1] Chạy LEC với Netlist gốc → kết quả Equivalent
+### 4. [PHẦN 1] Show log LEC Pass (đã chạy sẵn)
 
-Đảm bảo `bound_flasher_m.v` đang là symlink (Netlist gốc chưa bị sửa).
-Nếu đã copy thật từ Phần 2, restore lại symlink — **dùng tên cụ thể, không dùng wildcard**:
-
-```bash
-cd ~/vlsi/2313946/work/lec_env
-
-# Xác định tên thư mục outputs trước
-ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
-
-# Rồi mới restore symlink với tên cụ thể
-rm -f bound_flasher_m.v
-ln -sf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v
-```
-
-```bash
-./go_lec
-```
-✅ GUI mở → **không có Non-equivalent points** → Netlist equivalent với RTL
-
-Gõ `exit` để thoát GUI, sau đó tiếp tục.
-
----
-
-### 5. Show log LEC Pass
 ```bash
 grep -i "equivalent\|non-equivalent" ~/vlsi/2313946/work/lec_env/lec.log
 ```
@@ -513,54 +494,33 @@ grep -i "equivalent\|non-equivalent" ~/vlsi/2313946/work/lec_env/lec.log
 
 ---
 
-### 6. [PHẦN 2] Chuẩn bị Netlist có bug – copy thật + sửa INV → BUF
+### 5. [PHẦN 2] Show Netlist đã bị sửa bug
 
 ```bash
-cd ~/vlsi/2313946/work/lec_env
-rm -rf bound_flasher_m.v
-
-# Xác định tên thư mục outputs
-ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
-
-# Copy với tên cụ thể
-cp -rf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v ./
+grep -n "BUF" ~/vlsi/2313946/work/lec_env/bound_flasher_m.v | head -5
 ```
-
-Kiểm tra đã copy thật (không có `->` ):
-```bash
-ll
-```
-
-Tìm dòng INV để sửa:
-```bash
-grep -n "INV" bound_flasher_m.v | head -10
-```
-
-Sửa 1 INV → BUF (thay `<line_number>` bằng số dòng tìm được ở trên):
-```bash
-vi +<line_number> ./bound_flasher_m.v
-```
-> Trong vi: nhấn `i` → đổi `INVxx` → `BUFxx` (cùng size, ví dụ INVX1→BUFX1) và đổi port `.ZN` → `.Z` (nếu thư viện dùng `.Z`) → `Esc` → `:wq`
-
-Xác nhận sửa đúng:
-```bash
-sed -n '<line_number-2>,<line_number+2>p' bound_flasher_m.v
-```
+✅ Thấy cell BUF xuất hiện trong Netlist (là cell đã đổi từ INV sang)
 
 ---
 
-### 7. [PHẦN 2] Chạy lại LEC → kết quả Non-Equivalent
+### 6. [PHẦN 2] Show kết quả Non-Equivalent từ log
 
 ```bash
-./go_lec
+grep -i "non-equivalent\|equivalent" ~/vlsi/2313946/work/lec_env/lec.log
 ```
-✅ GUI mở → xuất hiện **Non-equivalent points**
+✅ Thấy dòng `NON-EQUIVALENT` → xác nhận Conformal đã phát hiện lỗi
 
 ---
 
-### 8. [PHẦN 2] Demo debug trên GUI – thực hiện thao tác tay
+### 7. [PHẦN 2] Demo debug trên GUI – mở lại GUI từ kết quả đã chạy
 
-Thực hiện theo thứ tự trên GUI:
+> Nếu GUI còn mở → dùng luôn. Nếu đã thoát, có thể mở lại log bằng:
+> ```bash
+> lec -64 -load lec.log &
+> ```
+> hoặc chỉ cần show trực tiếp trên terminal mà không cần mở GUI lại.
+
+Thực hiện thao tác tay trên GUI theo thứ tự:
 
 | Bước | Thao tác | Kết quả cần thấy |
 |------|----------|-----------------|
