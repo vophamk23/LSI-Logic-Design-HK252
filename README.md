@@ -3,7 +3,7 @@
 > **Thông tin sinh viên:**
 > - Group: `l04group8`
 > - Student ID: `2313946`
-> - Netlist đã có tại: `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/bound_flasher_m.v`
+> - Netlist đã có tại: `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v`
 > - RTL đã có tại: `~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/RTL/bound_flasher.v`
 > - Thư mục làm việc LAB3: `~/vlsi/2313946/work/lec_env/`
 
@@ -16,7 +16,7 @@ LAB 3 gồm 2 phần chính:
 | **Phần 1** | Thực hiện LEC bình thường → xác nhận Netlist tương đương RTL |
 | **Phần 2** | Debug Non-equivalent point bằng GUI (Mapping Manager + Schematics Viewer) |
 
-> ✅ Điều kiện tiên quyết: đã hoàn thành LAB2 (Synthesis), có file `bound_flasher_m.v` trong `outputs_*/`.
+> ✅ Điều kiện tiên quyết: đã hoàn thành LAB2 (Synthesis), có file `bound_flasher_m.v` trong `outputs_Apr10-XX:XX:XX/`.
 
 ## 🗂️ Cấu trúc thư mục
 
@@ -29,7 +29,7 @@ LAB 3 gồm 2 phần chính:
 │       ├── LIB/
 │       │   └── slow.lib              ← Library
 │       └── LAB1/
-│           └── outputs_*/
+│           └── outputs_Apr10-XX:XX:XX/
 │               └── bound_flasher_m.v ← Netlist (Revised)
 └── lec_env/                          ← Thư mục làm việc LAB3
     ├── bound_flasher.v               ← symlink → RTL
@@ -58,14 +58,15 @@ Link file RTL, Netlist và Library vào thư mục `lec_env`:
 
 ```bash
 ln -sf ../synthesis_env/Genus_BoundFlasher/RTL/bound_flasher.v
-ln -sf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/bound_flasher_m.v
+ln -sf ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v
 ln -sf ../synthesis_env/Genus_BoundFlasher/LIB/slow.lib
 ```
 
-> 📌 Lệnh `ln -sf` tạo **symbolic link** (không copy file). Nếu có nhiều thư mục `outputs_*`, thay `*` bằng tên thư mục cụ thể:
+> 📌 Lệnh `ln -sf` tạo **symbolic link** (không copy file). Xem tên thư mục `outputs_` thực tế bằng lệnh:
 > ```bash
-> ls ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/
+> ls -td ~/vlsi/2313946/work/synthesis_env/Genus_BoundFlasher/LAB1/outputs_*/ | head -1
 > ```
+> Thay `outputs_Apr10-XX:XX:XX` bằng tên thư mục in ra.
 
 ---
 
@@ -78,7 +79,7 @@ ll
 ✅ Phải thấy 3 file được link (có mũi tên `->` chỉ đến đường dẫn gốc):
 ```
 bound_flasher.v   -> ../synthesis_env/Genus_BoundFlasher/RTL/bound_flasher.v
-bound_flasher_m.v -> ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_.../bound_flasher_m.v
+bound_flasher_m.v -> ../synthesis_env/Genus_BoundFlasher/LAB1/outputs_Apr10-XX:XX:XX/bound_flasher_m.v
 slow.lib          -> ../synthesis_env/Genus_BoundFlasher/LIB/slow.lib
 ```
 
