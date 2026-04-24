@@ -233,10 +233,11 @@ Trước khi vào vi, tìm dòng có INV cell trong Netlist:
 grep -n "INV" bound_flasher_m.v | head -10
 ```
 
-Kết quả ví dụ:
+Kết quả thực tế trên hệ thống này:
 ```
-47: INVX1 U15 (.A(n_12), .ZN(n_13));
-63: INVX2 U23 (.A(n_20), .ZN(n_21));
+104:  INVX2 g4997(.A (n_130), .Y (n_146));
+166:  INVX1 g5078(.A (n_63), .Y (n_64));
+178:  INVX1 g5071(.A (n_69), .Y (n_78));
 ```
 
 Ghi nhớ số dòng của **1 cell bất kỳ** (ví dụ dòng 47) để dùng trong bước tiếp theo.
@@ -244,42 +245,24 @@ Ghi nhớ số dòng của **1 cell bất kỳ** (ví dụ dòng 47) để dùng
 
 ## BƯỚC 12 – Tạo bug trong Netlist
 
-### Cách 1: Dùng `vi` (mở trực tiếp đến dòng cần sửa)
-
+> 📌 Thư viện `slow.lib` trên hệ thống này dùng cell **INVX1/INVX2** với port output **`.Y`** (không phải `.ZN`). Cell BUF tương ứng là **BUFX1/BUFX2** cũng dùng port **`.Y`**.
+ 
+Sửa bằng `sed` (chỉ đổi tên cell, giữ nguyên port `.Y`):**
+ 
 ```bash
-vi +47 ./bound_flasher_m.v
+# Đổi INVX2 → BUFX2 tại dòng 104
+sed -i '104s/INVX2/BUFX2/' bound_flasher_m.v
 ```
-
-Trong vi: nhấn `i` → đổi `INV` thành `BUF` → sửa tên port output:
-
-```verilog
-# Trước khi sửa:
-INVX1 U15 (.A(n_12), .ZN(n_13));
-
-# Sau khi sửa:
-BUFX1 U15 (.A(n_12), .Z(n_13));
-```
-
-Nhấn `Esc` → `:wq` để lưu.
-
-
-### Cách 2: Dùng `sed` (nhanh hơn, không cần vào vi)
-
-Thay `47` bằng số dòng thực tế tìm được ở Bước 11, và thay tên cell phù hợp:
-
-```bash
-# Ví dụ: đổi INVX1 → BUFX1 tại dòng 47
-sed -i '47s/INVX1/BUFX1/' bound_flasher_m.v
-
-# Và đổi port .ZN → .Z tại cùng dòng đó
-sed -i '47s/\.ZN(/\.Z(/' bound_flasher_m.v
-```
-
+ 
 Xác nhận đã sửa đúng:
 ```bash
-sed -n '45,49p' bound_flasher_m.v
+sed -n '104p' bound_flasher_m.v
 ```
-
+ 
+✅ Phải thấy:
+```
+BUFX2 g4997(.A (n_130), .Y (n_146));
+```
 
 
 > ### ⚠️ Lưu ý quan trọng về tên port BUF
