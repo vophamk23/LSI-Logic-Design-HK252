@@ -1,0 +1,4 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/ASUS/Desktop/ring_flasher.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ring_flasher
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/ASUS/Desktop/testbench_ring_flasher.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module testbench_ring_flasher
